@@ -12,6 +12,17 @@ export class Bases {
         baseList <<= numBaseHit;              // existing runners
         baseList |= (1 << (numBaseHit - 1));  // hitter
     }
+    constexpr void walk() {
+        // TODO(ksolomon): implement walk logic
+        uint8_t mask = 0x01;
+        for (int i = 0; i < 4; i++) {
+            if ((mask & baseList) == 0) {
+                baseList |= mask;
+                break;
+            }
+            mask <<= 1;
+        }
+    }
     [[nodiscard]] auto getNumRuns() const -> int {
         int res = 0;
         uint8_t mask = runMask;
