@@ -1,18 +1,38 @@
-#include "GameState.hpp"
+module;
+#include <vector>
+import action;
+import Bases;
+import Player;
+export module GameState;
+export class GameState {
+ private:
+    int player;
+    int inning;
+    int outs;
+    int runs;
+    bool over;
+    Bases bases;
+    std::vector<Player> players;
+    void recordOut();
+    void recordAction(action_e);
 
-#include <print>
+ public:
+    static const int NUM_PLAYERS = 9;
+    static const int NUM_INNINGS = 9;
+    static const int OUTS_PER_INNING = 3;
+    explicit GameState(std::vector<Player>&);
+    auto playGameGetRunsAtBats() -> std::pair<int, int>;
+};
+
 void GameState::recordOut() {
-    // std::println("out!");
     outs++;
     outs %= OUTS_PER_INNING;
     if (outs == 0) {
         inning++;
         bases.endOfInning();
-        // std::println("end of {}th", inning);
     }
     if (inning == NUM_INNINGS) {
         over = true;
-        // std::println("end of game!");
     }
 }
 
@@ -33,14 +53,12 @@ void GameState::recordAction(action_e action) {
             numBases++;
         case ACTION_SINGLE:
             numBases++;
-            // std::println("{} base hit!", numBases);
             bases.advance(numBases);
             break;
         default:
             break;
     }
     runs += bases.getNumRuns();
-    // std::println("{} runs scored", runs);
     bases.clearRunnersWhoScored();
 }
 GameState::GameState(std::vector<Player>& players) : players(players) {

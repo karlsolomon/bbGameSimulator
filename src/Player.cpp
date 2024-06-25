@@ -1,15 +1,44 @@
-#include "Player.hpp"
-
+module;
+#include <cassert>
 #include <chrono>
 #include <cstdlib>
 #include <functional>
-#include <print>
 #include <random>
+#include <string>
+#include <vector>
 
-using std::bind;
+/*#include "action.h"*/
+import action;
+export module Player;
+
+export class Player {
+ private:
+    int atBats;
+    int singles;
+    int doubles;
+    int triples;
+    int homeRuns;
+    int walks;
+    int outs;
+
+    double pCumSingle;
+    double pCumDouble;
+    double pCumTriple;
+    double pCumHomeRun;
+    double pCumWalk;
+    double pCumOut;
+
+    void calculateCumulativeProbabilities();
+
+ public:
+    std::string name;
+    explicit Player(std::vector<std::string>&);
+    auto getRandomAction() -> action_e;
+};
+
+/*using std::bind;*/
 
 void Player::calculateCumulativeProbabilities() {
-    /*std::println("player = {}", this->name);*/
     assert(atBats == (singles + doubles + triples + homeRuns + walks + outs));
     pCumOut = static_cast<double>(outs) / static_cast<double>(atBats);
     pCumWalk = pCumOut + (static_cast<double>(walks) / static_cast<double>(atBats));

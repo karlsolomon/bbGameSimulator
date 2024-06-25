@@ -1,6 +1,6 @@
-#ifndef __ACTION_H__
-#define __ACTION_H__
-using action_e = enum action_e {
+module;
+export module action;
+export using action_e = enum action_e {
     ACTION_OUT = 0,
     ACTION_WALK,
     ACTION_SINGLE,
@@ -9,4 +9,3 @@ using action_e = enum action_e {
     ACTION_HR,
     ACTION_COUNT,
 };
-#endif

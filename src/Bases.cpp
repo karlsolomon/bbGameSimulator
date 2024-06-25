@@ -1,7 +1,21 @@
-#include "Bases.hpp"
+module;
+#include <cstdint>
+export module Bases;
+export class Bases {
+ private:
+    const uint8_t runMask = 0x78;  // [7] ignore, [6-3] runners who scored, [2-0] runners on bases 3-1
+    uint8_t baseList;
+    const int numBases = 3;
 
-#include <cstdio>
-#include <print>
+ public:
+    Bases();
+    void advance(int /*numBaseHit*/);
+    void walk();
+    [[nodiscard]] auto getNumRuns() const -> int;
+    void clearRunnersWhoScored();
+    void endOfInning();
+};
+
 Bases::Bases() : baseList(0) {}
 void Bases::advance(int numBaseHit) {
     baseList <<= numBaseHit;              // existing runners

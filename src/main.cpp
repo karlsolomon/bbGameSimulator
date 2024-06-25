@@ -8,8 +8,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "GameState.hpp"
+import Bases;
+import Player;
+import GameState;
+/*#include "GameState.hpp"*/
 
 // Do Avg/StDev
 template <typename T>
@@ -30,13 +32,9 @@ auto variance(const std::vector<T>& vec) -> T {
     return std::accumulate(vec.begin(), vec.end(), 0.0, variance_func);
 }
 
-#define NUM_GAMES 100000000
+#define NUM_GAMES 100000
 std::vector<std::string> csvList = {"../src/astros.csv", "../src/fff1.csv", "../src/lbl4.csv"};
 
-/*std::vector<std::string> csvList = {"../src/astros.csv", "../src/fff1.csv", "../src/fff2.csv",*/
-/*                                    "../src/fff3.csv",   "../src/fff4.csv", "../src/lbl1.csv",*/
-/*                                    "../src/lbl2.csv",   "../src/lbl3.csv", "../src/lbl4.csv"};*/
-/**/
 // Function to read a CSV file and store it in a 2D vector
 auto readCSV(const std::string& filename) -> std::vector<std::vector<std::string>> {
     std::vector<std::vector<std::string>> table;
