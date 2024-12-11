@@ -46,13 +46,19 @@ void GameState::recordAction(action_e action) {
             bases.walk();
             break;
         case ACTION_HR:
-            numBases++;
+            numBases = 4;
+            bases.advance(numBases);
+            break;
         case ACTION_TRIPLE:
-            numBases++;
+            numBases = 3;
+            bases.advance(numBases);
+            break;
         case ACTION_DOUBLE:
-            numBases++;
+            numBases = 2;
+            bases.advance(numBases);
+            break;
         case ACTION_SINGLE:
-            numBases++;
+            numBases = 1;
             bases.advance(numBases);
             break;
         default:

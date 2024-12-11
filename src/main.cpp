@@ -1,5 +1,10 @@
 #include <algorithm>
+#include <boost/program_options.hpp>
+#include <boost/program_options/detail/parsers.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 #include <cmath>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -11,14 +16,14 @@
 import Bases;
 import Player;
 import GameState;
-/*#include "GameState.hpp"*/
+namespace po = boost::program_options;
 
 // Do Avg/StDev
 template <typename T>
 auto variance(const std::vector<T>& vec) -> T {
     const size_t sz = vec.size();
     if (sz <= 1) {
-        return 0.0;
+        return 0.0;  // shouldn't happen
     }
 
     // Calculate the mean
@@ -32,8 +37,7 @@ auto variance(const std::vector<T>& vec) -> T {
     return std::accumulate(vec.begin(), vec.end(), 0.0, variance_func);
 }
 
-#define NUM_GAMES 100000
-std::vector<std::string> csvList = {"../src/astros.csv", "../src/fff1.csv", "../src/lbl4.csv"};
+#define DEFAULT_NUM_GAMES 10
 
 // Function to read a CSV file and store it in a 2D vector
 auto readCSV(const std::string& filename) -> std::vector<std::vector<std::string>> {
@@ -63,7 +67,7 @@ auto readCSV(const std::string& filename) -> std::vector<std::vector<std::string
 
 auto calculate_mean(const std::vector<int>& numbers) -> double {
     if (numbers.empty()) {
-        return 0.0;
+        return 0.0;  // shouldn't happen
     }
     double sum = std::accumulate(numbers.begin(), numbers.end(), 0.0);
     return sum / static_cast<double>(numbers.size());
@@ -71,7 +75,7 @@ auto calculate_mean(const std::vector<int>& numbers) -> double {
 
 auto calculate_median(std::vector<int>& numbers) -> double {
     if (numbers.empty()) {
-        return 0.0;
+        return 0.0;  // shouldn't happen
     }
     std::sort(numbers.begin(), numbers.end());
     if (numbers.size() % 2 == 0) {
@@ -81,40 +85,54 @@ auto calculate_median(std::vector<int>& numbers) -> double {
     }
 }
 
-auto main() -> int {
-    std::println("Testing with {} game simulations", NUM_GAMES);
-    for (auto file : csvList) {
-        std::vector<std::vector<std::string>> table;
-        try {
-            table = readCSV(file);
+void getArgs(int argc, char* argv[], int& numGames, std::string& csv) {}
 
-            // Print the table
-            for (const auto& row : table) {
-                for (const auto& cell : row) {
-                }
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << "\n";
-        }
-
-        std::vector<int> scores(NUM_GAMES);
-        std::vector<int> atBats(NUM_GAMES);
-        std::vector<Player> players;
-        for (int i = 1; i < table.size(); i++) {
-            players.emplace_back(table[i]);
-        }
-
-        GameState gs = GameState(players);
-        for (int i = 0; i < NUM_GAMES; i++) {
-            std::pair<int, int> stats = gs.playGameGetRunsAtBats();
-            scores[i] = stats.first;
-            atBats[i] = stats.second;
-        }
-        std::println("{}", file);
-        std::println("Runs: {} +/- {}: med {}", calculate_mean(scores),
-                     sqrt(variance(std::vector<double>(scores.begin(), scores.end()))), calculate_median(scores));
-        std::println("AB  : {} +/- {}: med {}", calculate_mean(atBats),
-                     sqrt(variance(std::vector<double>(atBats.begin(), atBats.end()))), calculate_median(atBats));
+auto main(int argc, char* argv[]) -> int {
+    int numGames;
+    std::string csv;
+    po::options_description desc("Options");
+    desc.add_options()("help,h", "Show help")("numGames,n", po::value<int>(&numGames)->required())(
+        "file,f", po::value<std::string>(&csv)->required(), "CSV file");
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    if (vm.count("help")) {
+        std::cout << desc << "\n";
+        return 0;
     }
+    po::notify(vm);
+    if (vm.count("file")) {
+        csv = {vm["file"].as<std::string>()};
+    }
+    if (vm.count("numGames")) {
+        numGames = vm["numGames"].as<int>();
+    }
+    std::println("Testing with {} game simulations", numGames);
+
+    std::vector<std::vector<std::string>> table;
+    try {
+        table = readCSV(csv);
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
+
+    std::vector<int> scores(numGames);
+    std::vector<int> atBats(numGames);
+    std::vector<Player> players;
+    for (size_t i = 1; i < table.size(); i++) {
+        players.emplace_back(table[i]);
+    }
+
+    GameState gs = GameState(players);
+    for (int i = 0; i < numGames; i++) {
+        std::pair<int, int> stats = gs.playGameGetRunsAtBats();
+        scores[i] = stats.first;
+        atBats[i] = stats.second;
+    }
+    std::println("{}", csv);
+    std::println("Runs: {} +/- {}: med {}", calculate_mean(scores),
+                 sqrt(variance(std::vector<double>(scores.begin(), scores.end()))), calculate_median(scores));
+    std::println("AB  : {} +/- {}: med {}", calculate_mean(atBats),
+                 sqrt(variance(std::vector<double>(atBats.begin(), atBats.end()))), calculate_median(atBats));
     return 0;
 }
