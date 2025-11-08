@@ -42,6 +42,10 @@ target_sources(
            ${SRC_DIR}/Bases.cpp
            ${SRC_DIR}/action.cpp
 )
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options("--coverage")
+    add_link_options("--coverage")
+endif()
 
 add_executable(baseball ${SRC_DIR}/main.cpp)
 target_link_libraries(baseball GameState ${Boost_LIBRARIES})
