@@ -85,8 +85,6 @@ auto calculate_median(std::vector<int>& numbers) -> double {
     }
 }
 
-void getArgs(int argc, char* argv[], int& numGames, std::string& csv) {}
-
 auto main(int argc, char* argv[]) -> int {
     int numGames;
     std::string csv;
