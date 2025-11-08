@@ -40,7 +40,7 @@ After building you can run the simulator from the root directory with
 ### Example
 ```
 # Run 10,000 simulations using the astros.csv data file
-./build/baseball -f astros.csv -n 10000
+./build/baseball -f ./examples/astros.csv -n 10000
 ```
 
 ## Input File Format

@@ -17,9 +17,9 @@ export class GameState {
     void recordAction(action_e);
 
  public:
-    static const int NUM_PLAYERS = 9;
-    static const int NUM_INNINGS = 9;
-    static const int OUTS_PER_INNING = 3;
+    static constexpr int NUM_PLAYERS = 9;
+    static constexpr int NUM_INNINGS = 9;
+    static constexpr int OUTS_PER_INNING = 3;
     explicit GameState(std::vector<Player>&);
     auto playGameGetRunsAtBats() -> std::pair<int, int>;
 };

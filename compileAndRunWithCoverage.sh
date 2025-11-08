@@ -5,7 +5,7 @@ BUILD_DIR="build"
 OUTPUT_DIR="coverage"
 BINARY="./${BUILD_DIR}/${NAME}"
 COV_FILE="${OUTPUT_DIR}/${NAME}"
-COMMAND="./${BUILD_DIR}/${NAME} -f astros.csv -n $2"
+COMMAND="./${BUILD_DIR}/${NAME} -f ./examples/astros.csv -n $2"
 cmake -D CMAKE_CXX_COMPILER=$1 src/ -G Ninja -B ${BUILD_DIR}
 ninja -C ${BUILD_DIR}
 rm -rf ${OUTPUT_DIR}
